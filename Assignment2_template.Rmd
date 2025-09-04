@@ -17,14 +17,13 @@ In this assignment, you will process electric organ and/or skeletal muscle RNA-s
 
 **This template is provided as reference for instructions. Files with specific naming conventions are requested to be turned in at the end of this problem set. You can use this template to gather notes while completing this assignment.** Be sure to upload all relevant materials by the deadline and **double check** to be sure that your offline repository is up-to-date with your online repository. Answers to questions should be included in your final, high-level, report as a `pdf`. This pdf should be generated using Rmarkdown and submitted to Canvas as well as GitHub. Be sure to keep a well-organized, detailed lab notebook!
 
-
 ### Dataset:
 
-Each of you will be working with 2 RNA-seq files from two different electric fish studies (PRJNA1005245 and PRJNA1005244). The methods for the PRJNA1005244 dataset are [published](https://doi.org/10.1093/molbev/msae021) and the methods for the PRJNA1005245 dataset are written in the third chapter of a [thesis](https://canvas.uoregon.edu/courses/266187/files/22059308?module_item_id=5380118). For all steps below, process the two libraries separately. SRR assignments are here: ```/projects/bgmp/shared/Bi623/PS2/QAA_data_Assignments.txt```. If you have time, consider claiming and processing additional RNA-seq raw sequencing files via this [google doc](https://docs.google.com/document/d/1vEmVEzUaTjbDF4JyNsWH-wFpi8dm4wkcvWgSoYZzoCY/edit?usp=sharing). Although this is not extra credit, it will make our downstream RNA-seq analysis more interesting and your classmates will appreciate your efforts.
+Each of you will be working with 2 RNA-seq files from two different electric fish studies (PRJNA1005245 and PRJNA1005244). The methods for the PRJNA1005244 dataset are [published](https://doi.org/10.1093/molbev/msae021) and the methods for the PRJNA1005245 dataset are written in the third chapter of a [thesis](https://canvas.uoregon.edu/courses/266187/files/22059308?module_item_id=5380118). For all steps below, process the two libraries separately. SRR assignments are here: `/projects/bgmp/shared/Bi623/PS2/QAA_data_Assignments.txt`. If you have time, consider claiming and processing additional RNA-seq raw sequencing files via this [google doc](https://docs.google.com/document/d/1vEmVEzUaTjbDF4JyNsWH-wFpi8dm4wkcvWgSoYZzoCY/edit?usp=sharing). Although this is not extra credit, it will make our downstream RNA-seq analysis more interesting and your classmates will appreciate your efforts.
 
-SRR25630309 and SRR25630393 are the Files that I am assigned. 
+SRR25630309 and SRR25630393 are the Files that I am assigned.
 
-You are responsible for downloading this data from NCBI SRA, dumping into FASTQ files, and zipping those files (check ICA1 for a refresher). We are processing this data for use in a future assignment, so please keep your files well organized. Finally, rename the files to the convention Species_sample_tissue_age/size_sample#_readnumber.fastq.gz.
+You are responsible for downloading this data from NCBI SRA, dumping into FASTQ files, and zipping those files (check ICA1 for a refresher). We are processing this data for use in a future assignment, so please keep your files well organized. Finally, rename the files to the convention Species_sample_tissue_age/size_sample#\_readnumber.fastq.gz.
 
 **Reminder: This template file IS not your final product; however, it gives you a space to record all of the necessary information for your final report.**
 
@@ -46,8 +45,8 @@ $ gzip Crh_rhy116_EO_adult_3_2.fastq
 
 ## Part 1 – Read quality score distributions
 
-1. Create a new conda environment called `QAA` and install `FastQC`, `cutadapt`, and `Trimmomatic`. Google around if you need a refresher on how to create conda environments. Recommend doing this in an interactive session, not the login node! Record details of how you created this environment in your lab notebook! Make sure you check your installation with:
-   - `fastqc --version` (should be 0.12.1)  
+1.  Create a new conda environment called `QAA` and install `FastQC`, `cutadapt`, and `Trimmomatic`. Google around if you need a refresher on how to create conda environments. Recommend doing this in an interactive session, not the login node! Record details of how you created this environment in your lab notebook! Make sure you check your installation with:
+    -   `fastqc --version` (should be 0.12.1)
 
 [Record details on how you made the conda environment]
 
@@ -60,49 +59,79 @@ $ mamba install Trimmomatic
 $ fastqc --version
 ```
 
-2. Using `FastQC` via the command line on Talapas, produce plots of the per-base quality score distributions for R1 and R2 reads. Also, produce plots of the per-base N content, and comment on whether or not they are consistent with the quality score plots.
+2.  Using `FastQC` via the command line on Talapas, produce plots of the per-base quality score distributions for R1 and R2 reads. Also, produce plots of the per-base N content, and comment on whether or not they are consistent with the quality score plots.
 
 [Include FastQC commands, plots of per-base N content, comments on consistency with quality score plots]
 
-3. Run your quality score plotting script from your Demultiplexing assignment in Bi622. (Make sure you're using the "running sum" strategy!!) Describe how the `FastQC` quality score distribution plots compare to your own. If different, propose an explanation. Also, does the run time differ? Mem/CPU usage? If so, why?
+```{bash}
+$ fastqc *.gz
+$ open Cco_com123_EO_6cm_1_1_fastqc.html
+$ open Cco_com123_EO_6cm_1_2_fastqc.html
+$ open Crh_rhy116_EO_adult_3_1_fastqc.html
+$ open Crh_rhy116_EO_adult_3_2_fastqc.html 
+```
+
+-   Cco_com123_EO_6cm_1_1_fastqc.html
+
+    For the Cco_com123_EO_6cm_1_1 per-base quality score distribution, we see consistent quality scores across all bases. There is some slight improvement from 1-3 bp and then an extremely gradual decline through 150, with a quality score greater than or equal to 34. The per-base N content is also seemingly fantastic. Through all positions, 0% N content is maintained. That is, through all bases we have no N content. We can see clear consistency with the quality score plots.
+
+-   Cco_com123_EO_6cm_1_2_fastqc.html
+
+    For the Cco_com123_EO_6cm_1_2 per-base quality score distribution, we see less consistent, but still great quality scores. We see a gradual decline from bp 1 through bp 150, dropping from 36 to what appears to be a Quality score of 33. In the per-base N content plot, we can, again, see 0% N content through all bases. We can see clear consistency with the quality score plots.
+
+-   Crh_rhy116_EO_adult_3_1_fastqc.html
+
+    For the Crh_rhy116_EO_adult_3_1 per-base quality score distribution, we, once again, see consistent quality scores across all bases.There is some slight improvement from 1-5 bp followed by an extremely gradual decline through bp 150, with quality scores in the 34-36 range. When examining the per-base N content, we, again, see 0% N content through all bases and maintain consistency with the quality score plots.
+
+-   Crh_rhy116_EO_adult_3_2_fastqc.html
+
+    For the Crh_rhy116_EO_adult_3_2_fastqc, we, once again, see a consistent quality score of 34-36 across all bp in the per-base quality score distribution. Once again, is a very gradual decline over bp in the quality score. Again, we see a per-base N content consistent with our quality scores. However, we see a small spike at bp1, seemingly demonstrating a 1% N Content at bp1. Even so, this is consistent with the other plot.
+
+
+3.  Run your quality score plotting script from your Demultiplexing assignment in Bi622. (Make sure you're using the "running sum" strategy!!) Describe how the `FastQC` quality score distribution plots compare to your own. If different, propose an explanation. Also, does the run time differ? Mem/CPU usage? If so, why?
+
+
 
 [Include quality score distribution plot, a comparison to FastQC, comments on any differences between your quality score plotting and FastQC]
 
-4. Comment on the overall data quality of your two libraries. Go beyond per-base qscore distributions. Examine the `FastQC` [documentation](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/) for guidance on interpreting results and planning next steps. Make and justify a recommendation on whether these data are of high enough quality to use for further analysis. 
+4.  Comment on the overall data quality of your two libraries. Go beyond per-base qscore distributions. Examine the `FastQC` [documentation](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/) for guidance on interpreting results and planning next steps. Make and justify a recommendation on whether these data are of high enough quality to use for further analysis.
 
 [Include comments on data quality and recommendation on whether this can be used for further analysis]
 
 ## Part 2 – Adaptor trimming comparison
 
 5.  If you haven't already in your QAA environment, install `Cutadapt` and `Trimmomatic`. Check your installations with:
-    - `cutadapt --version` (should be 5.0)
-    - `trimmomatic -version` (should be 0.39)
+    -   `cutadapt --version` (should be 5.0)
+    -   `trimmomatic -version` (should be 0.39)
 
 [Record details on install (if happened here) and/or version checking]
 
-6. Using `Cutadapt`, properly trim adapter sequences from your assigned files. Be sure to read how to use `Cutadapt`. Use default settings. What proportion of reads (both R1 and R2) were trimmed?
+6.  Using `Cutadapt`, properly trim adapter sequences from your assigned files. Be sure to read how to use `Cutadapt`. Use default settings. What proportion of reads (both R1 and R2) were trimmed?
 
     <details>
+
     <summary>Try to determine what the adapters are on your own. If you cannot (or if you do, and want to confirm), click here to see the actual adapter sequences used.</summary>
-  
+
     R1: `AGATCGGAAGAGCACACGTCTGAACTCCAGTCA`
-    
+
     R2: `AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT`
+
     </details>
 
-    - *Sanity check*: Use your Unix skills to search for the adapter sequences in your datasets and confirm the expected sequence orientations. Report the commands you used, the reasoning behind them, and how you confirmed the adapter sequences.
-    
-[Include commands and report out the proportion of reads trimmed]    
+    -   *Sanity check*: Use your Unix skills to search for the adapter sequences in your datasets and confirm the expected sequence orientations. Report the commands you used, the reasoning behind them, and how you confirmed the adapter sequences.
+
+[Include commands and report out the proportion of reads trimmed]
 
 ```{bash, eval=FALSE}
 
 ```
 
-7. Use `Trimmomatic` to quality trim your reads. Specify the following, **in this order**:
-    - LEADING: quality of 3
-    - TRAILING: quality of 3
-    - SLIDING WINDOW: window size of 5 and required quality of 15
-    - MINLENGTH: 35 bases
+7.  Use `Trimmomatic` to quality trim your reads. Specify the following, **in this order**:
+
+    -   LEADING: quality of 3
+    -   TRAILING: quality of 3
+    -   SLIDING WINDOW: window size of 5 and required quality of 15
+    -   MINLENGTH: 35 bases
 
     Be sure to output compressed files and clear out all intermediate files.
 
@@ -110,7 +139,7 @@ $ fastqc --version
 
 ```
 
-8. Plot the trimmed read length distributions for both paired R1 and paired R2 reads (on the same plot - yes, you will have to use Python or R to plot this. See ICA4 from Bi621). You can produce 2 different plots for your 2 different RNA-seq samples. There are a number of ways you could possibly do this. One useful thing your plot should show, for example, is whether R1s are trimmed more extensively than R2s, or vice versa. Comment on whether you expect R1s and R2s to be adapter-trimmed at different rates and why.
+8.  Plot the trimmed read length distributions for both paired R1 and paired R2 reads (on the same plot - yes, you will have to use Python or R to plot this. See ICA4 from Bi621). You can produce 2 different plots for your 2 different RNA-seq samples. There are a number of ways you could possibly do this. One useful thing your plot should show, for example, is whether R1s are trimmed more extensively than R2s, or vice versa. Comment on whether you expect R1s and R2s to be adapter-trimmed at different rates and why.
 
 [Include your plot and comment on R1/R2 adapter trimming]
 
@@ -118,7 +147,7 @@ $ fastqc --version
 
 ```
 
-9. Bonus - Run `FastQC` on your trimmed data. Comment on differences you observe between the trimmed and untrimmed data. Include any figures needed to support your conclusions.
+9.  Bonus - Run `FastQC` on your trimmed data. Comment on differences you observe between the trimmed and untrimmed data. Include any figures needed to support your conclusions.
 
 [Include command, comments on differences, and plot/s]
 
@@ -127,13 +156,14 @@ $ fastqc --version
 ```
 
 ## Part 3 – Alignment and strand-specificity
+
 10. Install additional software for alignment and counting of RNA-seq reads. In your QAA environment, use conda to install:
-    - Star
-    - Picard
-    - Samtools
-    - NumPy
-    - Matplotlib
-    - HTSeq
+    -   Star
+    -   Picard
+    -   Samtools
+    -   NumPy
+    -   Matplotlib
+    -   HTSeq
 
 [Record details on how you installed these packages]
 
@@ -141,20 +171,19 @@ $ fastqc --version
 
 ```
 
-11. Download the publicly available *Campylomormyrus compressirostris* genome fasta and gff file from [Dryad](https://datadryad.org/dataset/doi:10.5061/dryad.c59zw3rcj) and generate an alignment database from it. If the download fails, the files are available `/projects/bgmp/shared/Bi623/PS2/campylomormyrus.fasta`, `/projects/bgmp/shared/Bi623/PS2/campylomormyrus.gff`. Align the reads to your *C. compressirostris* database using a splice-aware aligner. Use the settings specified in PS8 from Bi621. 
+11. Download the publicly available *Campylomormyrus compressirostris* genome fasta and gff file from [Dryad](https://datadryad.org/dataset/doi:10.5061/dryad.c59zw3rcj) and generate an alignment database from it. If the download fails, the files are available `/projects/bgmp/shared/Bi623/PS2/campylomormyrus.fasta`, `/projects/bgmp/shared/Bi623/PS2/campylomormyrus.gff`. Align the reads to your *C. compressirostris* database using a splice-aware aligner. Use the settings specified in PS8 from Bi621.
 
-  > [!IMPORTANT]
-  > You will need to use gene models to perform splice-aware alignment, see PS8 from Bi621. You may need to convert the gff file into a gtf file for this to work successfully.
+> [!IMPORTANT] You will need to use gene models to perform splice-aware alignment, see PS8 from Bi621. You may need to convert the gff file into a gtf file for this to work successfully.
 
 [Record details on how you downloaded the genome, prepared the dataset for alignment, and commands for generating the alignment database and aligning reads]
-    
+
 ```{bash, eval=FALSE}
 
 ```
 
-12. Remove PCR duplicates using [Picard MarkDuplicates](https://broadinstitute.github.io/picard/command-line-overview.html#MarkDuplicates). You may need to sort your reads with `samtools` before running Picard. 
-- Use the following for running picard: picard MarkDuplicates INPUT=[FILE] OUTPUT=[FILE] METRICS_FILE=[FILENAME].metrics REMOVE_DUPLICATES=TRUE VALIDATION_STRINGENCY=LENIENT
- 
+12. Remove PCR duplicates using [Picard MarkDuplicates](https://broadinstitute.github.io/picard/command-line-overview.html#MarkDuplicates). You may need to sort your reads with `samtools` before running Picard.
+
+-   Use the following for running picard: picard MarkDuplicates INPUT=[FILE] OUTPUT=[FILE] METRICS_FILE=[FILENAME].metrics REMOVE_DUPLICATES=TRUE VALIDATION_STRINGENCY=LENIENT
 
 ```{bash, eval=FALSE}
 
@@ -172,8 +201,7 @@ $ fastqc --version
 
 15. Demonstrate convincingly whether or not the data are from "strand-specific" RNA-Seq libraries **and** which `stranded=` parameter should you use for counting your reads for a future differential gene expression analyses. Include any commands/scripts used. Briefly describe your evidence, using quantitative statements (e.g. "I propose that these data are/are not strand-specific, because X% of the reads are y, as opposed to z."). This [kit](https://www.revvity.com/product/nex-rapid-dir-rna-seq-kit-2-0-8rxn-nova-5198-01) was used during library preparation. This [paper](https://academic.oup.com/bfg/article/19/5-6/339/5837822) may provide helpful information.
 
-  > [!TIP]
-  > Recall ICA4 from Bi621.
+> [!TIP] Recall ICA4 from Bi621.
 
 [Describe whether your reads are "string-specific", why you think they are, any evidence, and which stranded parameter is appropriate and why]
 
@@ -186,29 +214,29 @@ Review the [publication](https://doi.org/10.1093/molbev/msae021) from PRJNA10052
 [Add insights to the dataset]
 
 ## Upload your:
-- [ ] lab notebook
-- [ ] Talapas batch script/code
-- [ ] FastQC plots
-- [ ] counts files generated from htseq-count (in a folder would be nice; **only include the counts files that would be used in a future differential RNA-seq analysis: use the format Species_sample_tissue_age/size_sample#_readnumber_htseqcounts_[revORyes]stranded.txt**)
-- [ ] pdf report (see below; turn into both Github AND Canvas)
-- [ ] and any additional plots, code, or code output
+
+-   [ ] lab notebook
+-   [ ] Talapas batch script/code
+-   [ ] FastQC plots
+-   [ ] counts files generated from htseq-count (in a folder would be nice; **only include the counts files that would be used in a future differential RNA-seq analysis: use the format Species_sample_tissue_age/size_sample#*readnumber_htseqcounts*[revORyes]stranded.txt**)
+-   [ ] pdf report (see below; turn into both Github AND Canvas)
+-   [ ] and any additional plots, code, or code output
 
 to GitHub.
-    
+
 ### Pdf report details
+
 You should create a pdf file (using Rmarkdown) with a high-level report including:
 
-- [ ] all requested plots
-- [ ] answers to questions
-- [ ] mapped/unmapped read counts from PS8 script (in a nicely formatted table)
-- [ ] It should be named `QAA_report.pdf`
-- [ ] Include at the top level of your repo
-- [ ] ALSO, submit it to Canvas.
+-   [ ] all requested plots
+-   [ ] answers to questions
+-   [ ] mapped/unmapped read counts from PS8 script (in a nicely formatted table)
+-   [ ] It should be named `QAA_report.pdf`
+-   [ ] Include at the top level of your repo
+-   [ ] ALSO, submit it to Canvas.
 
-> [!TIP]
-> You may need to install LaTeX to knit your rmarkdown into a pdf file. Run `tinytex::install_tinytex()` to install it on R.
-   
-The three parts of the assignment should be clearly labeled. Be sure to title and write a descriptive figure caption for each image/graph/table you present. 
+> [!TIP] You may need to install LaTeX to knit your rmarkdown into a pdf file. Run `tinytex::install_tinytex()` to install it on R.
 
-> [!TIP]
-> Think about figure captions you've read and discussed in Journal Club. Find some good examples to model your captions on.
+The three parts of the assignment should be clearly labeled. Be sure to title and write a descriptive figure caption for each image/graph/table you present.
+
+> [!TIP] Think about figure captions you've read and discussed in Journal Club. Find some good examples to model your captions on.
