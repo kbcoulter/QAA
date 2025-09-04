@@ -314,29 +314,29 @@ $ zcat Crh_rhy116_EO_adult_3_1.fastq.gz | grep -c AGATCGGAAGAGCGTCGTGTAGGGAAAGAG
 
 ```{bash, eval=FALSE}
 trimmomatic PE -threads 8 \
-Cco_com123_EO_6cm_1_1.fastq.gz Cco_com123_EO_6cm_1_2.fastq.gz \
-Cco_com123_EO_6cm_1_1_paired.fastq.gz Cco_com123_EO_6cm_1_1_unpaired.fastq.gz \
-Cco_com123_EO_6cm_1_2_paired.fastq.gz Cco_com123_EO_6cm_1_2_unpaired.fastq.gz \
+Cco_com123_EO_6cm_1_1_cut.fastq.gz Cco_com123_EO_6cm_1_2_cut.fastq.gz \
+Cco_com123_EO_6cm_1_1_cut_paired.fastq.gz Cco_com123_EO_6cm_1_1_cut_unpaired.fastq.gz \
+Cco_com123_EO_6cm_1_2_cut_paired.fastq.gz Cco_com123_EO_6cm_1_2_cut_unpaired.fastq.gz \
 LEADING:3 TRAILING:3 SLIDINGWINDOW:5:15 MINLEN:35
 ```
 
 ```{eval = FALSE}
 Quality encoding detected as phred33
-Input Read Pairs: 3735980 Both Surviving: 3695631 (98.92%) Forward Only Surviving: 29371 (0.79%) Reverse Only Surviving: 9592 (0.26%) Dropped: 1386 (0.04%)
+Input Read Pairs: 3735980 Both Surviving: 3695585 (98.92%) Forward Only Surviving: 29316 (0.78%) Reverse Only Surviving: 9603 (0.26%) Dropped: 1476 (0.04%)
 TrimmomaticPE: Completed successfully
 ```
 
 ```{bash, eval=FALSE}
 trimmomatic PE -threads 8 \
-Crh_rhy116_EO_adult_3_1.fastq.gz Crh_rhy116_EO_adult_3_2.fastq.gz \
-Crh_rhy116_EO_adult_3_1_paired.fastq.gz Crh_rhy116_EO_adult_3_1_unpaired.fastq.gz \
-Crh_rhy116_EO_adult_3_2_paired.fastq.gz Crh_rhy116_EO_adult_3_2_unpaired.fastq.gz \
+Crh_rhy116_EO_adult_3_1_cut.fastq.gz Crh_rhy116_EO_adult_3_2_cut.fastq.gz \
+Crh_rhy116_EO_adult_3_1_cut_paired.fastq.gz Crh_rhy116_EO_adult_3_1_cut_unpaired.fastq.gz \
+Crh_rhy116_EO_adult_3_2_cut_paired.fastq.gz Crh_rhy116_EO_adult_3_2_cut_unpaired.fastq.gz \
 LEADING:3 TRAILING:3 SLIDINGWINDOW:5:15 MINLEN:35
 ```
 
 ```{eval = FALSE}
 Quality encoding detected as phred33
-Input Read Pairs: 32594028 Both Surviving: 32426051 (99.48%) Forward Only Surviving: 111699 (0.34%) Reverse Only Surviving: 51887 (0.16%) Dropped: 4391 (0.01%)
+Input Read Pairs: 32594028 Both Surviving: 32425688 (99.48%) Forward Only Surviving: 111529 (0.34%) Reverse Only Surviving: 51935 (0.16%) Dropped: 4876 (0.01%)
 TrimmomaticPE: Completed successfully
 ```
 

@@ -186,9 +186,9 @@
     ### TRIMMOMATIC OUTPUTS ###
     
       Quality encoding detected as phred33
-      Input Read Pairs: 3735980 Both Surviving: 3695631 (98.92%) Forward Only Surviving: 29371 (0.79%) Reverse Only Surviving: 9592 (0.26%) Dropped: 1386 (0.04%)
+      Input Read Pairs: 3735980 Both Surviving: 3695585 (98.92%) Forward Only Surviving: 29316 (0.78%) Reverse Only Surviving: 9603 (0.26%) Dropped: 1476 (0.04%)
       TrimmomaticPE: Completed successfully
       
       Quality encoding detected as phred33
-      Input Read Pairs: 32594028 Both Surviving: 32426051 (99.48%) Forward Only Surviving: 111699 (0.34%) Reverse Only Surviving: 51887 (0.16%) Dropped: 4391 (0.01%)
+      Input Read Pairs: 32594028 Both Surviving: 32425688 (99.48%) Forward Only Surviving: 111529 (0.34%) Reverse Only Surviving: 51935 (0.16%) Dropped: 4876 (0.01%)
       TrimmomaticPE: Completed successfully
