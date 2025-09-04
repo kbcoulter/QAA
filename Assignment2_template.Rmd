@@ -63,7 +63,7 @@ $ fastqc --version
 
 [Include FastQC commands, plots of per-base N content, comments on consistency with quality score plots]
 
-```{bash}
+```{bash, eval=FALSE}
 $ fastqc *.gz
 $ open Cco_com123_EO_6cm_1_1_fastqc.html
 $ open Cco_com123_EO_6cm_1_2_fastqc.html
@@ -87,16 +87,39 @@ $ open Crh_rhy116_EO_adult_3_2_fastqc.html
 
     For the Crh_rhy116_EO_adult_3_2_fastqc, we, once again, see a consistent quality score of 34-36 across all bp in the per-base quality score distribution. Once again, is a very gradual decline over bp in the quality score. Again, we see a per-base N content consistent with our quality scores. However, we see a small spike at bp1, seemingly demonstrating a 1% N Content at bp1. Even so, this is consistent with the other plot.
 
-
 3.  Run your quality score plotting script from your Demultiplexing assignment in Bi622. (Make sure you're using the "running sum" strategy!!) Describe how the `FastQC` quality score distribution plots compare to your own. If different, propose an explanation. Also, does the run time differ? Mem/CPU usage? If so, why?
 
-
+    The plot looks identical, but the process that generated the FASTQC plot was far faster and more resource efficient than my quality score plot. This may seem surprising, given that FASTQC creates multiple plots while my script generates only a single one, but several factors explain why my figure takes longer to produce. First, I am not using Numpy for basic computations, which would immediately reduce memory usage and runtime. Second, my script is written in Python, which is much slower than the languages FASTQC is likely written in, such as Java or C. Finally, my script is optimized for logic and readability, whereas FASTQC is undoubtedly optimized for speed and resource efficiency. While other factors also contribute to the high memory usage, CPU load, and runtime of my script, these are the primary reasons it is significantly slower.
 
 [Include quality score distribution plot, a comparison to FastQC, comments on any differences between your quality score plotting and FastQC]
 
 4.  Comment on the overall data quality of your two libraries. Go beyond per-base qscore distributions. Examine the `FastQC` [documentation](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/) for guidance on interpreting results and planning next steps. Make and justify a recommendation on whether these data are of high enough quality to use for further analysis.
 
 [Include comments on data quality and recommendation on whether this can be used for further analysis]
+
+-   Per Tile Sequence Quality: !
+
+    In Cco_com123_EO_6cm_1_1, we see a bit of decline in quality per tile as we reach the end of our reads. However, this is very minor, and displays no effect on the read quality in any of the other measures. In our sequence quality plots, at these base positions, we see more variance in the quality score, but a more than acceptable score. So, there is nothing to worry about in this warning.
+
+-   Per Base Sequence Content: X
+
+    In all files, we see Per base sequence content flagged as failure. However, this is just our bar codes at the beginning of the reads. This warning can be dismissed.
+
+-   Per Sequence GC content: !
+
+    In Cco_com123_EO_6cm_1_1, GC content is sightly left skewed from the normal distribution that is expected. However, we still create a normal distribution that is only *slightly* offset from what is expected. We see a bit of noise in the peak, but, again, this is not something to be overly concerned with and this warning can be dismissed.
+
+-   Sequence Duplication Levels: X
+
+    In every file we get Sequence Duplication Levels flagged as failure. However, this is expected in RNA-seq, which we have here. Due to highly expressed transcripts, paired end reads in our sequencing process, and fragment size bias, this can be expected. We can dismiss this warning.
+
+-   Adapter Content: X
+
+    In every file, we get an adapter content warning flagged as failure. Again, this is an artifact or leftover of RNA-seq and can be dismissed. We have short fragments, causing us to sequence the adapter at the end of our reads. We have a bit of contamination at the end of our reads, suggesting our adapters are a bit long. This is expected in illumina RNA-seq and can be dismissed.
+
+-   CAN WE USE THESE FILES FOR FURTHER ANALYSIS:
+
+    Based on the data quality and the dismissal of all raised warnings, we can continue to analyze this data. Everything looks as expected for the type of sequencing we used to generate this data, the data is high quality, and nothing seems questionable or suspicious. Continue with analysis!
 
 ## Part 2 – Adaptor trimming comparison
 
@@ -106,23 +129,169 @@ $ open Crh_rhy116_EO_adult_3_2_fastqc.html
 
 [Record details on install (if happened here) and/or version checking]
 
+```{bash, eval=FALSE}
+$ cutadapt --version
+## 5.1
+$ trimmomatic -version
+## 0.40
+```
+
 6.  Using `Cutadapt`, properly trim adapter sequences from your assigned files. Be sure to read how to use `Cutadapt`. Use default settings. What proportion of reads (both R1 and R2) were trimmed?
 
-    <details>
-
-    <summary>Try to determine what the adapters are on your own. If you cannot (or if you do, and want to confirm), click here to see the actual adapter sequences used.</summary>
-
-    R1: `AGATCGGAAGAGCACACGTCTGAACTCCAGTCA`
-
-    R2: `AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT`
-
-    </details>
-
-    -   *Sanity check*: Use your Unix skills to search for the adapter sequences in your datasets and confirm the expected sequence orientations. Report the commands you used, the reasoning behind them, and how you confirmed the adapter sequences.
-
-[Include commands and report out the proportion of reads trimmed]
+-   We are using Illumina TruSeq adapters -\> verified after vy looking at the hint.
 
 ```{bash, eval=FALSE}
+cutadapt \
+-a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
+-A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT \
+-o Cco_com123_EO_6cm_1_1_cut.fastq.gz \
+-p Cco_com123_EO_6cm_1_2_cut.fastq.gz \
+Cco_com123_EO_6cm_1_1.fastq.gz Cco_com123_EO_6cm_1_2.fastq.gz
+```
+
+``` {eval="FALSE"}
+Done           00:00:39     3,735,980 reads @  10.6 µs/read;   5.67 M reads/minute
+
+=== Summary ===
+
+Total read pairs processed:          3,735,980
+  Read 1 with adapter:                 589,610 (15.8%)
+  Read 2 with adapter:                 610,016 (16.3%)
+Pairs written (passing filters):     3,735,980 (100.0%)
+
+Total basepairs processed: 1,120,794,000 bp
+  Read 1:   560,397,000 bp
+  Read 2:   560,397,000 bp
+Total written (filtered):  1,094,083,321 bp (97.6%)
+  Read 1:   546,818,038 bp
+  Read 2:   547,265,283 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: AGATCGGAAGAGCACACGTCTGAACTCCAGTCA; Type: regular 3'; Length: 33; Trimmed: 589610 times
+
+Minimum overlap: 3
+No. of allowed errors:
+1-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-33 bp: 3
+
+Bases preceding removed adapters:
+  A: 11.1%
+  C: 26.7%
+  G: 47.2%
+  T: 15.0%
+  none/other: 0.0%
+
+=== Second read: Adapter 2 ===
+
+Sequence: AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT; Type: regular 3'; Length: 33; Trimmed: 610016 times
+
+Minimum overlap: 3
+No. of allowed errors:
+1-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-33 bp: 3
+
+Bases preceding removed adapters:
+  A: 9.3%
+  C: 21.8%
+  G: 58.4%
+  T: 10.5%
+  none/other: 0.0%
+```
+
+```{bash, eval=FALSE}
+cutadapt \
+-a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
+-A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT \
+-o Crh_rhy116_EO_adult_3_1_cut.fastq.gz \
+-p Crh_rhy116_EO_adult_3_2_cut.fastq.gz \
+Crh_rhy116_EO_adult_3_1.fastq.gz Crh_rhy116_EO_adult_3_2.fastq.gz
+```
+
+``` {eval="FALSE"}
+Done           00:05:29    32,594,028 reads @  10.1 µs/read;   5.94 M reads/minute
+
+=== Summary ===
+
+Total read pairs processed:         32,594,028
+  Read 1 with adapter:               4,264,287 (13.1%)
+  Read 2 with adapter:               4,455,966 (13.7%)
+Pairs written (passing filters):    32,594,028 (100.0%)
+
+Total basepairs processed: 9,778,208,400 bp
+  Read 1: 4,889,104,200 bp
+  Read 2: 4,889,104,200 bp
+Total written (filtered):  9,593,951,183 bp (98.1%)
+  Read 1: 4,795,698,545 bp
+  Read 2: 4,798,252,638 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: AGATCGGAAGAGCACACGTCTGAACTCCAGTCA; Type: regular 3'; Length: 33; Trimmed: 4264287 times
+
+Minimum overlap: 3
+No. of allowed errors:
+1-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-33 bp: 3
+
+Bases preceding removed adapters:
+  A: 11.9%
+  C: 25.1%
+  G: 48.4%
+  T: 14.6%
+  none/other: 0.0%
+  
+=== Second read: Adapter 2 ===
+
+Sequence: AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT; Type: regular 3'; Length: 33; Trimmed: 4455966 times
+
+Minimum overlap: 3
+No. of allowed errors:
+1-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-33 bp: 3
+
+Bases preceding removed adapters:
+  A: 10.7%
+  C: 24.8%
+  G: 53.6%
+  T: 10.9%
+  none/other: 0.0%
+```
+
+<details>
+
+<summary>Try to determine what the adapters are on your own. If you cannot (or if you do, and want to confirm), click here to see the actual adapter sequences used.</summary>
+
+R1: `AGATCGGAAGAGCACACGTCTGAACTCCAGTCA`
+
+R2: `AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT`
+
+</details>
+
+-   *Sanity check*: Use your Unix skills to search for the adapter sequences in your datasets and confirm the expected sequence orientations. Report the commands you used, the reasoning behind them, and how you confirmed the adapter sequences.
+
+-   Cco_com123_EO_6cm_1_1.fastq.gz : 15.8% of reads (R1) were trimmed.
+
+-   Cco_com123_EO_6cm_1_2.fastq.gz : 16.3% of reads (R2) were trimmed.
+
+-   Crh_rhy116_EO_adult_3_1.fastq.gz : 13.1% of reads (R1) were trimmed.
+
+-   Crh_rhy116_EO_adult_3_2.fastq.gz : 13.7% of reads (R2) were trimmed.
+
+When we switch adapter and file pairings (R1 adapter with R2 file) we find 0 matches in the file. However, maintaining what we now know is the correct pairing yields many matches, indicating that the pairing is correct.
+
+Still, it should be noted that is is possible to get 0 with a match, assuming every adapter was partially cut off. However, this incredibly unlikely. Even more so when compared to the number of what would be non-adapter matches in the read of the other files. More so considering that adapters are intentionally selected, as they do not occur naturally. Basically, there is some chance that this method could be wrong, but it is incredibly unlikely. Keeping this in mind, we pass our sanity check.
+
+Also, note the difference in proportions between these results and cutadapt is because here, we are searching for the *entire* adapter, which can often be cutoff and/or lost in sequencing.
+
+```{bash, eval=FALSE}
+
+$ zcat Cco_com123_EO_6cm_1_1.fastq.gz | grep -c AGATCGGAAGAGCACACGTCTGAACTCCAGTCA ## 147375
+$ zcat Cco_com123_EO_6cm_1_2.fastq.gz | grep -c AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT ## 55585
+$ zcat Crh_rhy116_EO_adult_3_1.fastq.gz | grep -c AGATCGGAAGAGCACACGTCTGAACTCCAGTCA ## 964952
+$ zcat Crh_rhy116_EO_adult_3_2.fastq.gz | grep -c AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT ## 311694
+
+## WHEN YOU SWITCH THE ADAPTERS TO WHAT WE NOW KNOW IS BACKWARDS, WE DO NOT FIND THEM IN THE FILE
+$ zcat Cco_com123_EO_6cm_1_1.fastq.gz | grep -c AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT ## 0 
+$ zcat Cco_com123_EO_6cm_1_2.fastq.gz | grep -c AGATCGGAAGAGCACACGTCTGAACTCCAGTCA ## 0
+$ zcat Crh_rhy116_EO_adult_3_2.fastq.gz | grep -c AGATCGGAAGAGCACACGTCTGAACTCCAGTCA ## 0
+$ zcat Crh_rhy116_EO_adult_3_1.fastq.gz | grep -c AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT ## 0 
 
 ```
 
@@ -136,7 +305,31 @@ $ open Crh_rhy116_EO_adult_3_2_fastqc.html
     Be sure to output compressed files and clear out all intermediate files.
 
 ```{bash, eval=FALSE}
+trimmomatic PE -threads 8 \
+Cco_com123_EO_6cm_1_1.fastq.gz Cco_com123_EO_6cm_1_2.fastq.gz \
+Cco_com123_EO_6cm_1_1_paired.fastq.gz Cco_com123_EO_6cm_1_1_unpaired.fastq.gz \
+Cco_com123_EO_6cm_1_2_paired.fastq.gz Cco_com123_EO_6cm_1_2_unpaired.fastq.gz \
+LEADING:3 TRAILING:3 SLIDINGWINDOW:5:15 MINLEN:35
+```
 
+```{eval = FALSE}
+Quality encoding detected as phred33
+Input Read Pairs: 3735980 Both Surviving: 3695631 (98.92%) Forward Only Surviving: 29371 (0.79%) Reverse Only Surviving: 9592 (0.26%) Dropped: 1386 (0.04%)
+TrimmomaticPE: Completed successfully
+```
+
+```{bash, eval=FALSE}
+trimmomatic PE -threads 8 \
+Crh_rhy116_EO_adult_3_1.fastq.gz Crh_rhy116_EO_adult_3_2.fastq.gz \
+Crh_rhy116_EO_adult_3_1_paired.fastq.gz Crh_rhy116_EO_adult_3_1_unpaired.fastq.gz \
+Crh_rhy116_EO_adult_3_2_paired.fastq.gz Crh_rhy116_EO_adult_3_2_unpaired.fastq.gz \
+LEADING:3 TRAILING:3 SLIDINGWINDOW:5:15 MINLEN:35
+```
+
+```{eval = FALSE}
+Quality encoding detected as phred33
+Input Read Pairs: 32594028 Both Surviving: 32426051 (99.48%) Forward Only Surviving: 111699 (0.34%) Reverse Only Surviving: 51887 (0.16%) Dropped: 4391 (0.01%)
+TrimmomaticPE: Completed successfully
 ```
 
 8.  Plot the trimmed read length distributions for both paired R1 and paired R2 reads (on the same plot - yes, you will have to use Python or R to plot this. See ICA4 from Bi621). You can produce 2 different plots for your 2 different RNA-seq samples. There are a number of ways you could possibly do this. One useful thing your plot should show, for example, is whether R1s are trimmed more extensively than R2s, or vice versa. Comment on whether you expect R1s and R2s to be adapter-trimmed at different rates and why.

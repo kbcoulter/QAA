@@ -1,0 +1,183 @@
+####################
+### PS2 NOTEBOOK ###  
+####################
+
+  #########################
+  # author: Kaden Coulter #
+  # date: 2025-09-03      #
+  # PS2 Bi623 KCGIPBG     #
+  #########################
+
+  ### QAA ENV ### 
+    List of packages in environment: "/gpfs/home/kcoulter/miniforge3/envs/QAA"
+    Name                       Version       Build                 Channel   
+    cutadapt                   5.1           py312h0fa9677_0       bioconda  
+    fastqc                     0.12.1        hdfd78af_0            bioconda   
+    matplotlib                 3.10.6        py312h7900ff3_1       conda-forge
+    numpy                      2.3.2         py312h33ff503_2       conda-forge
+    trimmomatic                0.40          hdfd78af_0            bioconda 
+  
+  ### PART 1 ###
+  
+    # ASSIGNED : SRR25630309 and SRR25630393
+    
+    # LOOKUP: @ NCBI SRA
+    
+    # FILENAMES:
+      SRR25630309	Cco_com123_EO_6cm_1	Cco_com123_EO_6cm_1_htseqcounts_[forORrev]stranded.txt
+      SRR25630393	Crh_rhy116_EO_adult_3	Crh_rhy116_EO_adult_3_htseqcounts_[forORrev]stranded.txt
+    
+    # FETCH -> FASTA
+      $ prefetch SRR25630309
+      $ prefetch SRR25630393
+      $ fasterq-dump SRR25630393 --split-files --progress
+      $ fasterq-dump SRR25630309 --split-files --progress
+      
+    # ! TO OPEN HTML NAV TO LOCAL AND USE OPEN <FILENAME>.html
+    
+    # WHEN REVIEWING THE HTML AND DECIDING WHAT TO DO:
+      https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/
+    
+    Based on the data quality and the dismissal of all raised warnings, we can 
+    continue to analyze this data. Everything looks as expected for the type of 
+    sequencing we used to generate this data, the data is high quality, and 
+    nothing seems questionable or suspicious. Continue with analysis!
+    
+    # PLOT GENERATION USING .PY AND .SH #
+    
+      Copied bioinfo.py qual_by_nuc.py qual_by_nuc_slurm.sh and edited qual_by 
+      
+      Note: Requesting 70 QB of Memory in Slurm. 
+            Know that scripts are inefficient but something seems off...
+            
+      Submitted batch job 37909622: Should be good...
+        Was catting into a var and then reading... taking too much mem
+        
+      FINAL OUT:
+        HERE
+    
+    
+  ### PART 2 ###
+  
+    ### PACKAGES ###
+      $ cutadapt --version ## 5.1
+      $ trimmomatic -version ## 0.40
+      ##  I am going to assume that these versions are okay and move forward. Will return if any errors occur. 
+    
+    ### CUTADAPT 1 OUTPUT ###
+    
+        Done           00:00:39     3,735,980 reads @  10.6 µs/read;   5.67 M reads/minute
+        
+        === Summary ===
+        
+        Total read pairs processed:          3,735,980
+          Read 1 with adapter:                 589,610 (15.8%)
+          Read 2 with adapter:                 610,016 (16.3%)
+        Pairs written (passing filters):     3,735,980 (100.0%)
+        
+        Total basepairs processed: 1,120,794,000 bp
+          Read 1:   560,397,000 bp
+          Read 2:   560,397,000 bp
+        Total written (filtered):  1,094,083,321 bp (97.6%)
+          Read 1:   546,818,038 bp
+          Read 2:   547,265,283 bp
+        
+        === First read: Adapter 1 ===
+        
+        Sequence: AGATCGGAAGAGCACACGTCTGAACTCCAGTCA; Type: regular 3'; Length: 33; Trimmed: 589610 times
+        
+        Minimum overlap: 3
+        No. of allowed errors:
+        1-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-33 bp: 3
+        
+        Bases preceding removed adapters:
+          A: 11.1%
+          C: 26.7%
+          G: 47.2%
+          T: 15.0%
+          none/other: 0.0%
+        
+        === Second read: Adapter 2 ===
+        
+        Sequence: AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT; Type: regular 3'; Length: 33; Trimmed: 610016 times
+        
+        Minimum overlap: 3
+        No. of allowed errors:
+        1-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-33 bp: 3
+        
+        Bases preceding removed adapters:
+          A: 9.3%
+          C: 21.8%
+          G: 58.4%
+          T: 10.5%
+          none/other: 0.0%
+          
+    ### CUTADAPT 2 OUTPUT ###
+    
+      Done           00:05:29    32,594,028 reads @  10.1 µs/read;   5.94 M reads/minute
+
+      === Summary ===
+      
+      Total read pairs processed:         32,594,028
+        Read 1 with adapter:               4,264,287 (13.1%)
+        Read 2 with adapter:               4,455,966 (13.7%)
+      Pairs written (passing filters):    32,594,028 (100.0%)
+      
+      Total basepairs processed: 9,778,208,400 bp
+        Read 1: 4,889,104,200 bp
+        Read 2: 4,889,104,200 bp
+      Total written (filtered):  9,593,951,183 bp (98.1%)
+        Read 1: 4,795,698,545 bp
+        Read 2: 4,798,252,638 bp
+      
+      === First read: Adapter 1 ===
+      
+      Sequence: AGATCGGAAGAGCACACGTCTGAACTCCAGTCA; Type: regular 3'; Length: 33; Trimmed: 4264287 times
+      
+      Minimum overlap: 3
+      No. of allowed errors:
+      1-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-33 bp: 3
+      
+      Bases preceding removed adapters:
+        A: 11.9%
+        C: 25.1%
+        G: 48.4%
+        T: 14.6%
+        none/other: 0.0%
+        
+      === Second read: Adapter 2 ===
+      
+      Sequence: AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT; Type: regular 3'; Length: 33; Trimmed: 4455966 times
+      
+      Minimum overlap: 3
+      No. of allowed errors:
+      1-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-33 bp: 3
+      
+      Bases preceding removed adapters:
+        A: 10.7%
+        C: 24.8%
+        G: 53.6%
+        T: 10.9%
+        none/other: 0.0%
+
+    ### SANITY CHECK ###
+    
+      $ zcat Cco_com123_EO_6cm_1_1.fastq.gz | grep -c AGATCGGAAGAGCACACGTCTGAACTCCAGTCA ## 147375
+      $ zcat Cco_com123_EO_6cm_1_2.fastq.gz | grep -c AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT ## 55585
+      $ zcat Crh_rhy116_EO_adult_3_1.fastq.gz | grep -c AGATCGGAAGAGCACACGTCTGAACTCCAGTCA ## 964952
+      $ zcat Crh_rhy116_EO_adult_3_2.fastq.gz | grep -c AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT ## 311694
+      ## WHEN YOU SWITCH THE ADAPTERS TO WHAT WE NOW KNOW IS BACKWARDS, WE DO NOT FIND THEM IN THE FILE
+      $ zcat Cco_com123_EO_6cm_1_1.fastq.gz | grep -c AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT ## 0 
+      $ zcat Cco_com123_EO_6cm_1_2.fastq.gz | grep -c AGATCGGAAGAGCACACGTCTGAACTCCAGTCA ## 0
+      $ zcat Crh_rhy116_EO_adult_3_2.fastq.gz | grep -c AGATCGGAAGAGCACACGTCTGAACTCCAGTCA ## 0
+      $ zcat Crh_rhy116_EO_adult_3_1.fastq.gz | grep -c AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT ## 0 
+      
+    ### TRIMMOMATIC OUTPUTS ###
+    
+      Quality encoding detected as phred33
+      Input Read Pairs: 3735980 Both Surviving: 3695631 (98.92%) Forward Only Surviving: 29371 (0.79%) Reverse Only Surviving: 9592 (0.26%) Dropped: 1386 (0.04%)
+      TrimmomaticPE: Completed successfully
+      
+      Quality encoding detected as phred33
+      Input Read Pairs: 32594028 Both Surviving: 32426051 (99.48%) Forward Only Surviving: 111699 (0.34%) Reverse Only Surviving: 51887 (0.16%) Dropped: 4391 (0.01%)
+      TrimmomaticPE: Completed successfully
