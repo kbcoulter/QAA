@@ -89,9 +89,17 @@ $ open Crh_rhy116_EO_adult_3_2_fastqc.html
 
 3.  Run your quality score plotting script from your Demultiplexing assignment in Bi622. (Make sure you're using the "running sum" strategy!!) Describe how the `FastQC` quality score distribution plots compare to your own. If different, propose an explanation. Also, does the run time differ? Mem/CPU usage? If so, why?
 
-    The plot looks identical, but the process that generated the FASTQC plot was far faster and more resource efficient than my quality score plot. This may seem surprising, given that FASTQC creates multiple plots while my script generates only a single one, but several factors explain why my figure takes longer to produce. First, I am not using Numpy for basic computations, which would immediately reduce memory usage and runtime. Second, my script is written in Python, which is much slower than the languages FASTQC is likely written in, such as Java or C. Finally, my script is optimized for logic and readability, whereas FASTQC is undoubtedly optimized for speed and resource efficiency. While other factors also contribute to the high memory usage, CPU load, and runtime of my script, these are the primary reasons it is significantly slower.
+```{r, eval=FALSE}
+$ gzip -dc Cco_com123_EO_6cm_1_1.fastq.gz | head -n 4 | awk '{ print length($0) }'
+```
 
-[Include quality score distribution plot, a comparison to FastQC, comments on any differences between your quality score plotting and FastQC]
+    The plots look nearly identical (as far as values), but my process was faster than the entire FastQC output. I did not use a quality score cutoff, include error bars, or bin the quality scores into acceptable and less acceptable regions, but beyond that, my output matches the FastQC. 
+    
+While the runtime was shorter, my process may not be as fast or resource efficient as FastQC. 
+    
+    First, my script is written in Python, which is much slower than the languages FASTQC is likely written in, such as Java or C. Also, my script is optimized for logic and readability, whereas FASTQC is undoubtedly optimized for speed and resource efficiency. Finally, I am creating a single plot, not multiple, formatting them into an html, or producing detailed user messages and warnings like FastQC. While other factors also contribute to the high memory usage, CPU load, and runtime of my script, these are the primary reasons it may not be faster than FastQC, like it seems. 
+
+INSERT CCo_1.png !!! 
 
 4.  Comment on the overall data quality of your two libraries. Go beyond per-base qscore distributions. Examine the `FastQC` [documentation](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/) for guidance on interpreting results and planning next steps. Make and justify a recommendation on whether these data are of high enough quality to use for further analysis.
 
@@ -361,7 +369,12 @@ TrimmomaticPE: Completed successfully
 [Record details on how you installed these packages]
 
 ```{bash, eval=FALSE}
-
+$ mamba install Star
+$ mamba install Picard
+$ mamba install Samtools
+$ mamba install NumPy
+$ mamba install Matplotlib
+$ mamba install HTSeqs
 ```
 
 11. Download the publicly available *Campylomormyrus compressirostris* genome fasta and gff file from [Dryad](https://datadryad.org/dataset/doi:10.5061/dryad.c59zw3rcj) and generate an alignment database from it. If the download fails, the files are available `/projects/bgmp/shared/Bi623/PS2/campylomormyrus.fasta`, `/projects/bgmp/shared/Bi623/PS2/campylomormyrus.gff`. Align the reads to your *C. compressirostris* database using a splice-aware aligner. Use the settings specified in PS8 from Bi621.

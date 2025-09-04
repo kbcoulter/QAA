@@ -53,8 +53,19 @@
       Submitted batch job 37909622: Should be good...
         Was catting into a var and then reading... taking too much mem
         
+      ISSUE SOLVED: WAS PASSING FASTA LENGTH NOT READ:
+      
+      $ gzip -dc Cco_com123_EO_6cm_1_1.fastq.gz | head -n 4 | awk '{ print length($0) }' ## 150
+      
       FINAL OUT:
-        HERE
+      
+        	Command being timed: "./qual_by_nuc.py -f Cco_com123_EO_6cm_1_1.fastq.gz -k 150 -o Cco_1_1"
+        	User time (seconds): 145.52
+        	System time (seconds): 0.14
+        	Percent of CPU this job got: 95%
+        	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:31.80
+        	Exit status: 0
+        
     
     
   ### PART 2 ###
