@@ -229,6 +229,39 @@
         
       # CREATED database_builder.sh
       # CREATED starliner.sh
-        
-        
       
+    # SAMTOOLS TO BAM AND PICARD
+      $ mamba install samtools
+      $ samtools sort -@ 4 -o Campy_Cco_com123_sorted.bam Campy_Cco_com123_alignedAligned.out.sam
+        [bam_sort_core] merging from 0 files and 4 in-memory blocks...
+      $ samtools sort -@ 4 -o Campy_Crh_rhy116_sorted.bam Campy_Crh_rhy116_alignedAligned.out.sam 
+        [bam_sort_core] merging from 7 files and 4 in-memory blocks...
+      
+      
+      !!! NOTE: STRANGE THINGS ARE GOING ON WITH PICARD. !!!
+        $ mamba create -n stupidpicard python=3.6
+        $ mamba activate stupidpicard
+        $ mamba install -c conda-forge -c bioconda picard=2.18.0
+        
+        $ picard MarkDuplicates     INPUT=Campy_Cco_com123_sorted.bam     OUTPUT=Campy_Cco_com123_sort_marked.bam     METRICS_FILE=Cco_com123_picard.metrics     REMOVE_DUPLICATES=TRUE     VALIDATION_STRINGENCY=LENIENT
+          ## htsjdk.samtools.metrics.StringHeader
+          # Started on: Thu Sep 04 22:50:19 PDT 2025
+          
+          ## METRICS CLASS	picard.sam.DuplicationMetrics
+          LIBRARY	UNPAIRED_READS_EXAMINED	READ_PAIRS_EXAMINED	SECONDARY_OR_SUPPLEMENTARY_RDS	UNMAPPED_READS	UNPAIRED_READ_DUPLICATES	READ_PAIR_DUPLICATES	READ_PAIR_OPTICAL_DUPLICATES	PERCENT_DUPLICATION	ESTIMATED_LIBRARY_SIZE
+          Unknown Library	7738	3412953	1105531	558103	4710	1280227	0	0.375373	3321328
+        
+        $ picard MarkDuplicates \
+            INPUT=Campy_Crh_rhy116_sorted.bam \
+            OUTPUT=Campy_Crh_rhy116_sort_marked.bam \
+            METRICS_FILE=Campy_Crh_rhy116_picard.metrics \
+            REMOVE_DUPLICATES=TRUE \
+            VALIDATION_STRINGENCY=LENIENT
+            
+    # sam_reporter.py STAT RETURNS
+      $ samtools view -h -o Campy_Crh_rhy116_sort_marked.sam Campy_Crh_rhy116_sort_marked.bam
+      $ samtools view -h -o Campy_Cco_com123_sort_marked.sam Campy_Cco_com123_sort_marked.bam
+      $ cp /projects/bgmp/kcoulter/bioinfo/Bi621/PS/PS8/ps8-kbcoulter/sam_reporter.py . ## THEN EDIT IT
+      $ chmod 755 sam_reporter.py 
+      $ python sam_reporter.py -f star_aligned/Campy_Cco_com123_sort_marked.sam star_aligned/Campy_Crh_rhy116_sort_marked.sam
+        

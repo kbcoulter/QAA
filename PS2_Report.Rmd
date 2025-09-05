@@ -9,23 +9,15 @@ date: "2025-04-25"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# RNA-seq Quality Assessment Assignment - Bi 623 (Summer 2025 Assignment/PS 2)
+# RNA-seq Quality Assessment Report
 
-## Overall assignment:
+## Dataset:
 
-In this assignment, you will process electric organ and/or skeletal muscle RNA-seq reads for a future differential gene expression analysis. We will be completing the differential gene expression analysis in our last bioinformatics assignment of this class. You will learn how to use existing tools for quality assessment and read trimming, compare quality assessments to those created by your own software, and how to align and count reads. Additionally, you will learn how to summarize important information in a high-level report. You should create a cohesive, well written report for your "PI" about what you've learned about/from your data.
+We will be working with 2 RNA-seq files from two different electric fish studies (PRJNA1005245 and PRJNA1005244). The methods for the PRJNA1005244 dataset are [published](https://doi.org/10.1093/molbev/msae021) and the methods for the PRJNA1005245 dataset are written in the third chapter of a [thesis](https://canvas.uoregon.edu/courses/266187/files/22059308?module_item_id=5380118).
 
-**This template is provided as reference for instructions. Files with specific naming conventions are requested to be turned in at the end of this problem set. You can use this template to gather notes while completing this assignment.** Be sure to upload all relevant materials by the deadline and **double check** to be sure that your offline repository is up-to-date with your online repository. Answers to questions should be included in your final, high-level, report as a `pdf`. This pdf should be generated using Rmarkdown and submitted to Canvas as well as GitHub. Be sure to keep a well-organized, detailed lab notebook!
+SRR25630309 and SRR25630393 are the Files that I will be working with.
 
-### Dataset:
-
-Each of you will be working with 2 RNA-seq files from two different electric fish studies (PRJNA1005245 and PRJNA1005244). The methods for the PRJNA1005244 dataset are [published](https://doi.org/10.1093/molbev/msae021) and the methods for the PRJNA1005245 dataset are written in the third chapter of a [thesis](https://canvas.uoregon.edu/courses/266187/files/22059308?module_item_id=5380118). For all steps below, process the two libraries separately. SRR assignments are here: `/projects/bgmp/shared/Bi623/PS2/QAA_data_Assignments.txt`. If you have time, consider claiming and processing additional RNA-seq raw sequencing files via this [google doc](https://docs.google.com/document/d/1vEmVEzUaTjbDF4JyNsWH-wFpi8dm4wkcvWgSoYZzoCY/edit?usp=sharing). Although this is not extra credit, it will make our downstream RNA-seq analysis more interesting and your classmates will appreciate your efforts.
-
-SRR25630309 and SRR25630393 are the Files that I am assigned.
-
-You are responsible for downloading this data from NCBI SRA, dumping into FASTQ files, and zipping those files (check ICA1 for a refresher). We are processing this data for use in a future assignment, so please keep your files well organized. Finally, rename the files to the convention Species_sample_tissue_age/size_sample#\_readnumber.fastq.gz.
-
-**Reminder: This template file IS not your final product; however, it gives you a space to record all of the necessary information for your final report.**
+### Data Acquisition
 
 ```{bash, eval=FALSE}
 ## Download your data
@@ -45,10 +37,7 @@ $ gzip Crh_rhy116_EO_adult_3_2.fastq
 
 ## Part 1 – Read quality score distributions
 
-1.  Create a new conda environment called `QAA` and install `FastQC`, `cutadapt`, and `Trimmomatic`. Google around if you need a refresher on how to create conda environments. Recommend doing this in an interactive session, not the login node! Record details of how you created this environment in your lab notebook! Make sure you check your installation with:
-    -   `fastqc --version` (should be 0.12.1)
-
-[Record details on how you made the conda environment]
+### Created a new conda environment called `QAA` and with `FastQC`, `cutadapt`, and `Trimmomatic`.
 
 ```{bash, eval=FALSE}
 $ conda create -n QAA
@@ -59,9 +48,9 @@ $ mamba install Trimmomatic
 $ fastqc --version
 ```
 
-2.  Using `FastQC` via the command line on Talapas, produce plots of the per-base quality score distributions for R1 and R2 reads. Also, produce plots of the per-base N content, and comment on whether or not they are consistent with the quality score plots.
+### Using `FastQC`produced plots of the per-base quality score distributions for R1 and R2 reads.
 
-[Include FastQC commands, plots of per-base N content, comments on consistency with quality score plots]
+#### (Additionally produced plots of the per-base N content)
 
 ```{bash, eval=FALSE}
 $ fastqc *.gz
@@ -71,41 +60,46 @@ $ open Crh_rhy116_EO_adult_3_1_fastqc.html
 $ open Crh_rhy116_EO_adult_3_2_fastqc.html 
 ```
 
--   Cco_com123_EO_6cm_1_1_fastqc.html
+!!! INCLUDE plots of per-base N content !!!
 
-    For the Cco_com123_EO_6cm_1_1 per-base quality score distribution, we see consistent quality scores across all bases. There is some slight improvement from 1-3 bp and then an extremely gradual decline through 150, with a quality score greater than or equal to 34. The per-base N content is also seemingly fantastic. Through all positions, 0% N content is maintained. That is, through all bases we have no N content. We can see clear consistency with the quality score plots.
+Cco_com123_EO_6cm_1_1_fastqc.html:
 
--   Cco_com123_EO_6cm_1_2_fastqc.html
+For the Cco_com123_EO_6cm_1_1 per-base quality score distribution, we see consistent quality scores across all bases. There is some slight improvement from 1-3 bp and then an extremely gradual decline through 150, with a quality score greater than or equal to 34. The per-base N content is also seemingly fantastic. Through all positions, 0% N content is maintained. That is, through all bases we have no N content. We can see clear consistency with the quality score plots.
 
-    For the Cco_com123_EO_6cm_1_2 per-base quality score distribution, we see less consistent, but still great quality scores. We see a gradual decline from bp 1 through bp 150, dropping from 36 to what appears to be a Quality score of 33. In the per-base N content plot, we can, again, see 0% N content through all bases. We can see clear consistency with the quality score plots.
+Cco_com123_EO_6cm_1_2_fastqc.html:
 
--   Crh_rhy116_EO_adult_3_1_fastqc.html
+For the Cco_com123_EO_6cm_1_2 per-base quality score distribution, we see less consistent, but still great quality scores. We see a gradual decline from bp 1 through bp 150, dropping from 36 to what appears to be a Quality score of 33. In the per-base N content plot, we can, again, see 0% N content through all bases. We can see clear consistency with the quality score plots.
 
-    For the Crh_rhy116_EO_adult_3_1 per-base quality score distribution, we, once again, see consistent quality scores across all bases.There is some slight improvement from 1-5 bp followed by an extremely gradual decline through bp 150, with quality scores in the 34-36 range. When examining the per-base N content, we, again, see 0% N content through all bases and maintain consistency with the quality score plots.
+Crh_rhy116_EO_adult_3_1_fastqc.html:
 
--   Crh_rhy116_EO_adult_3_2_fastqc.html
+For the Crh_rhy116_EO_adult_3_1 per-base quality score distribution, we, once again, see consistent quality scores across all bases.There is some slight improvement from 1-5 bp followed by an extremely gradual decline through bp 150, with quality scores in the 34-36 range. When examining the per-base N content, we, again, see 0% N content through all bases and maintain consistency with the quality score plots.
 
-    For the Crh_rhy116_EO_adult_3_2_fastqc, we, once again, see a consistent quality score of 34-36 across all bp in the per-base quality score distribution. Once again, is a very gradual decline over bp in the quality score. Again, we see a per-base N content consistent with our quality scores. However, we see a small spike at bp1, seemingly demonstrating a 1% N Content at bp1. Even so, this is consistent with the other plot.
+Crh_rhy116_EO_adult_3_2_fastqc.html:
 
-3.  Run your quality score plotting script from your Demultiplexing assignment in Bi622. (Make sure you're using the "running sum" strategy!!) Describe how the `FastQC` quality score distribution plots compare to your own. If different, propose an explanation. Also, does the run time differ? Mem/CPU usage? If so, why?
+For the Crh_rhy116_EO_adult_3_2_fastqc, we, once again, see a consistent quality score of 34-36 across all bp in the per-base quality score distribution. Once again, is a very gradual decline over bp in the quality score. Again, we see a per-base N content consistent with our quality scores. However, we see a small spike at bp1, seemingly demonstrating a 1% N Content at bp1. Even so, this is consistent with the other plot.
+
+### Ran altered quality score plotting script from Demultiplexing.
+
+#### (Using the "running sum" strategy)
 
 ```{r, eval=FALSE}
 $ gzip -dc Cco_com123_EO_6cm_1_1.fastq.gz | head -n 4 | awk '{ print length($0) }'
+$ sbatch ./qual_by_nuc_slurm.sh ## Runs qual_by_nuc.py
 ```
 
-    The plots look nearly similiar (as far as values), but my process was faster than the entire FastQC output.
-    
-I did not include error bars and colored bins for acceptable scores, but beyond those minor details, my values are slight different from the FastQC. At the beginning of the reads, my plot shows a higher quality score. This is because my script does not take into account any adapters added to the beginning of the reads. So, I am artificially inflating these mean values and offsetting my reads. Still, my plot is comparable to FastQC. If this data wasn't high quality, this could become an enormously important oversight. 
-    
-Reagrding runtime and resource use, while the runtime was shorter (3:12.14 mins to ~ 15), my process may not be as fast or resource efficient as FastQC. 
-    
-    First, my script is written in Python, which is much slower than the languages FASTQC is likely written in, such as Java or C. Also, my script is optimized for logic and readability, whereas FASTQC is undoubtedly optimized for speed and resource efficiency. Finally, I am creating a single plot, not multiple, formatting them into an html, or producing detailed user messages and warnings like FastQC. While other factors also contribute to the high memory usage, CPU load, and runtime of my script, these are the primary reasons it may not be faster than FastQC, like it seems. 
+The plots look similar (as far as values), but my process was faster than the entire FastQC output.
 
-INSERT CCo_1.png !!! 
+I did not include error bars and colored bins for acceptable scores, but beyond those minor details, my values are slight different from the FastQC. At the beginning of the reads, my plot shows a higher quality score. This is because my script does not take into account any adapters added to the beginning of the reads. So, I am artificially inflating these mean values and offsetting my reads. Still, my plot is comparable to FastQC. If this data wasn't high quality, this could become an enormously important oversight.
 
-4.  Comment on the overall data quality of your two libraries. Go beyond per-base qscore distributions. Examine the `FastQC` [documentation](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/) for guidance on interpreting results and planning next steps. Make and justify a recommendation on whether these data are of high enough quality to use for further analysis.
+Regarding run time and resource use, while the run time was shorter (3:12.14 mins to \~ 15), my process may not be as fast or resource efficient as FastQC.
 
-[Include comments on data quality and recommendation on whether this can be used for further analysis]
+First, my script is written in Python, which is much slower than the languages FASTQC is likely written in, such as Java or C. Also, my script is optimized for logic and readability, whereas FASTQC is undoubtedly optimized for speed and resource efficiency. Finally, I am creating a single plot, not multiple, formatting them into an html, or producing detailed user messages and warnings like FastQC. While other factors also contribute to the high memory usage, CPU load, and run time of my script, these are the primary reasons it may not be faster than FastQC, like it seems.
+
+!!! INSERT CCo_1.png !!!
+
+### Comments Regarding overall data quality of your two libraries.
+
+#### Using the `FastQC` [documentation](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/) for guidance on interpreting results:
 
 -   Per Tile Sequence Quality: !
 
@@ -127,17 +121,20 @@ INSERT CCo_1.png !!!
 
     In every file, we get an adapter content warning flagged as failure. Again, this is an artifact or leftover of RNA-seq and can be dismissed. We have short fragments, causing us to sequence the adapter at the end of our reads. We have a bit of contamination at the end of our reads, suggesting our adapters are a bit long. This is expected in illumina RNA-seq and can be dismissed.
 
--   CAN WE USE THESE FILES FOR FURTHER ANALYSIS:
+#### Can We Use This For Further Analysis:
 
-    Based on the data quality and the dismissal of all raised warnings, we can continue to analyze this data. Everything looks as expected for the type of sequencing we used to generate this data, the data is high quality, and nothing seems questionable or suspicious. Continue with analysis!
+```         
+Based on the data quality and the dismissal of all raised warnings, we can continue to analyze this data. Everything looks as expected for the type of sequencing we used to generate this data, the data is high quality, and nothing seems questionable or suspicious. Continue with analysis!
+```
 
 ## Part 2 – Adaptor trimming comparison
 
-5.  If you haven't already in your QAA environment, install `Cutadapt` and `Trimmomatic`. Check your installations with:
-    -   `cutadapt --version` (should be 5.0)
-    -   `trimmomatic -version` (should be 0.39)
+### Installations for `Cutadapt` and `Trimmomatic`.
 
-[Record details on install (if happened here) and/or version checking]
+```         
+#### -   `cutadapt --version` (should be 5.0)
+#### -   `trimmomatic -version` (should be 0.39)
+```
 
 ```{bash, eval=FALSE}
 $ cutadapt --version
@@ -146,9 +143,23 @@ $ trimmomatic -version
 ## 0.40
 ```
 
-6.  Using `Cutadapt`, properly trim adapter sequences from your assigned files. Be sure to read how to use `Cutadapt`. Use default settings. What proportion of reads (both R1 and R2) were trimmed?
+These versions support the current task.
 
--   We are using Illumina TruSeq adapters -\> verified after vy looking at the hint.
+### Using `Cutadapt` to properly trim adapter (Illumina TruSeq) sequences from files.
+
+#### (More Output Available in PS2_Notebook.txt if desired).
+
+#### Results:
+
+-   Cco_com123_EO_6cm_1_1.fastq.gz : 15.8% of reads (R1) were trimmed.
+
+-   Cco_com123_EO_6cm_1_2.fastq.gz : 16.3% of reads (R2) were trimmed.
+
+-   Crh_rhy116_EO_adult_3_1.fastq.gz : 13.1% of reads (R1) were trimmed.
+
+-   Crh_rhy116_EO_adult_3_2.fastq.gz : 13.7% of reads (R2) were trimmed.
+
+#### Source Code:
 
 ```{bash, eval=FALSE}
 cutadapt \
@@ -175,36 +186,6 @@ Total basepairs processed: 1,120,794,000 bp
 Total written (filtered):  1,094,083,321 bp (97.6%)
   Read 1:   546,818,038 bp
   Read 2:   547,265,283 bp
-
-=== First read: Adapter 1 ===
-
-Sequence: AGATCGGAAGAGCACACGTCTGAACTCCAGTCA; Type: regular 3'; Length: 33; Trimmed: 589610 times
-
-Minimum overlap: 3
-No. of allowed errors:
-1-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-33 bp: 3
-
-Bases preceding removed adapters:
-  A: 11.1%
-  C: 26.7%
-  G: 47.2%
-  T: 15.0%
-  none/other: 0.0%
-
-=== Second read: Adapter 2 ===
-
-Sequence: AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT; Type: regular 3'; Length: 33; Trimmed: 610016 times
-
-Minimum overlap: 3
-No. of allowed errors:
-1-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-33 bp: 3
-
-Bases preceding removed adapters:
-  A: 9.3%
-  C: 21.8%
-  G: 58.4%
-  T: 10.5%
-  none/other: 0.0%
 ```
 
 ```{bash, eval=FALSE}
@@ -232,57 +213,9 @@ Total basepairs processed: 9,778,208,400 bp
 Total written (filtered):  9,593,951,183 bp (98.1%)
   Read 1: 4,795,698,545 bp
   Read 2: 4,798,252,638 bp
-
-=== First read: Adapter 1 ===
-
-Sequence: AGATCGGAAGAGCACACGTCTGAACTCCAGTCA; Type: regular 3'; Length: 33; Trimmed: 4264287 times
-
-Minimum overlap: 3
-No. of allowed errors:
-1-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-33 bp: 3
-
-Bases preceding removed adapters:
-  A: 11.9%
-  C: 25.1%
-  G: 48.4%
-  T: 14.6%
-  none/other: 0.0%
-  
-=== Second read: Adapter 2 ===
-
-Sequence: AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT; Type: regular 3'; Length: 33; Trimmed: 4455966 times
-
-Minimum overlap: 3
-No. of allowed errors:
-1-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-33 bp: 3
-
-Bases preceding removed adapters:
-  A: 10.7%
-  C: 24.8%
-  G: 53.6%
-  T: 10.9%
-  none/other: 0.0%
 ```
 
-<details>
-
-<summary>Try to determine what the adapters are on your own. If you cannot (or if you do, and want to confirm), click here to see the actual adapter sequences used.</summary>
-
-R1: `AGATCGGAAGAGCACACGTCTGAACTCCAGTCA`
-
-R2: `AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT`
-
-</details>
-
--   *Sanity check*: Use your Unix skills to search for the adapter sequences in your datasets and confirm the expected sequence orientations. Report the commands you used, the reasoning behind them, and how you confirmed the adapter sequences.
-
--   Cco_com123_EO_6cm_1_1.fastq.gz : 15.8% of reads (R1) were trimmed.
-
--   Cco_com123_EO_6cm_1_2.fastq.gz : 16.3% of reads (R2) were trimmed.
-
--   Crh_rhy116_EO_adult_3_1.fastq.gz : 13.1% of reads (R1) were trimmed.
-
--   Crh_rhy116_EO_adult_3_2.fastq.gz : 13.7% of reads (R2) were trimmed.
+#### Sanity check: Confirming the expected sequence orientations.
 
 When we switch adapter and file pairings (R1 adapter with R2 file) we find 0 matches in the file. However, maintaining what we now know is the correct pairing yields many matches, indicating that the pairing is correct.
 
@@ -344,10 +277,9 @@ TrimmomaticPE: Completed successfully
 
 8.  Plot the trimmed read length distributions for both paired R1 and paired R2 reads (on the same plot - yes, you will have to use Python or R to plot this. See ICA4 from Bi621). You can produce 2 different plots for your 2 different RNA-seq samples. There are a number of ways you could possibly do this. One useful thing your plot should show, for example, is whether R1s are trimmed more extensively than R2s, or vice versa. Comment on whether you expect R1s and R2s to be adapter-trimmed at different rates and why.
 
-Cco_com123_EO_6cm_1_readlen.png
-Crh_rhy116_EO_adult_3_readlen.png
+Cco_com123_EO_6cm_1_readlen.png Crh_rhy116_EO_adult_3_readlen.png
 
-In the plots, we can see that read 2 is generally shorter than read 1 after trimming. This is likely because we cutoff more low quality reads at the 3' end, forcing us to cut more bases and adapters and make the reads shorter than read1. R2 should be adapter trimmed at a higher rate than R1. 
+In the plots, we can see that read 2 is generally shorter than read 1 after trimming. This is likely because we cutoff more low quality reads at the 3' end, forcing us to cut more bases and adapters and make the reads shorter than read1. R2 should be adapter trimmed at a higher rate than R1.
 
 9.  Bonus - Run `FastQC` on your trimmed data. Comment on differences you observe between the trimmed and untrimmed data. Include any figures needed to support your conclusions.
 
@@ -400,46 +332,12 @@ $ sbatch ./starliner.sh
 -   Use the following for running picard: picard MarkDuplicates INPUT=[FILE] OUTPUT=[FILE] METRICS_FILE=[FILENAME].metrics REMOVE_DUPLICATES=TRUE VALIDATION_STRINGENCY=LENIENT
 
 ```{bash, eval=FALSE}
-$ mamba install samtools
-$ samtools sort -@ 4 -o Campy_Cco_com123_sorted.bam Campy_Cco_com123_alignedAligned.out.sam
-$ samtools sort -@ 4 -o Campy_Crh_rhy116_sorted.bam Campy_Crh_rhy116_alignedAligned.out.sam 
 
-$ mamba create -n stupidpicard python=3.6
-$ mamba activate stupidpicard
-$ mamba install -c conda-forge -c bioconda picard=2.18.0
-
-$ picard MarkDuplicates     INPUT=Campy_Cco_com123_sorted.bam     OUTPUT=Campy_Cco_com123_sort_marked.bam     METRICS_FILE=Cco_com123_picard.metrics     REMOVE_DUPLICATES=TRUE     VALIDATION_STRINGENCY=LENIENT
-
-$ picard MarkDuplicates \
-    INPUT=Campy_Crh_rhy116_sorted.bam \
-    OUTPUT=Campy_Crh_rhy116_sort_marked.bam \
-    METRICS_FILE=Campy_Crh_rhy116_picard.metrics \
-    REMOVE_DUPLICATES=TRUE \
-    VALIDATION_STRINGENCY=LENIENT
-```
-
-```{eval = FALSE}
-# Started on: Thu Sep 04 22:50:19 PDT 2025
-## METRICS CLASS	picard.sam.DuplicationMetrics
-LIBRARY	UNPAIRED_READS_EXAMINED	READ_PAIRS_EXAMINED	SECONDARY_OR_SUPPLEMENTARY_RDS	UNMAPPED_READS	UNPAIRED_READ_DUPLICATES	READ_PAIR_DUPLICATES	READ_PAIR_OPTICAL_DUPLICATES	PERCENT_DUPLICATION	ESTIMATED_LIBRARY_SIZE
-Unknown Library	7738	3412953	1105531	558103	4710	1280227	0	0.375373	3321328
-
-# Started on: Thu Sep 04 23:14:02 PDT 2025
-## METRICS CLASS	picard.sam.DuplicationMetrics
-LIBRARY	UNPAIRED_READS_EXAMINED	READ_PAIRS_EXAMINED	SECONDARY_OR_SUPPLEMENTARY_RDS	UNMAPPED_READS	UNPAIRED_READ_DUPLICATES	READ_PAIR_DUPLICATES	READ_PAIR_OPTICAL_DUPLICATES	PERCENT_DUPLICATION	ESTIMATED_LIBRARY_SIZE
-Unknown Library	18939	31081660	3946526	2670143	15466	15159849	0	0.487843	20327822
 ```
 
 13. Using your script from PS8 in Bi621, report the number of mapped and unmapped reads from each of your 2 SAM files post deduplication with picard. Make sure that your script is looking at the bitwise flag to determine if reads are primary or secondary mapping (update/fix your script if necessary).
 
-```{bash, eval=False}
-$ samtools view -h -o Campy_Crh_rhy116_sort_marked.sam Campy_Crh_rhy116_sort_marked.bam
-$ samtools view -h -o Campy_Cco_com123_sort_marked.sam Campy_Cco_com123_sort_marked.bam
-$ python sam_reporter.py -f star_aligned/Campy_Cco_com123_sort_marked.sam star_aligned/Campy_Crh_rhy116_sort_marked.sam
-```
-
-- star_aligned/Campy_Cco_com123_sort_marked.sam, Mapped:4268480, Unmapped:557526
-- star_aligned/Campy_Crh_rhy116_sort_marked.sam, Mapped:31847095, Unmapped:2669117
+[Include the number of mapped and unmapped reads from both same files]
 
 14. Count deduplicated reads that map to features using `htseq-count`. You should run htseq-count twice: once with `--stranded=yes` and again with `--stranded=reverse`. Use default parameters otherwise. You may need to use the `-i` parameter for this run.
 
