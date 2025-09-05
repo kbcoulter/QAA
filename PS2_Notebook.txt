@@ -192,3 +192,43 @@
       Quality encoding detected as phred33
       Input Read Pairs: 32594028 Both Surviving: 32425688 (99.48%) Forward Only Surviving: 111529 (0.34%) Reverse Only Surviving: 51935 (0.16%) Dropped: 4876 (0.01%)
       TrimmomaticPE: Completed successfully
+      
+    ### PLOTS ###
+    
+      Created read_len_dist.py and read_len_dist_slurm.sh to create what is needed -> EVEN HAS COLOR OPTION :D
+      -> Give it a bit of memory to run all 4 at the same time. 
+      
+      Consider going back and cleaning up the plot for Cco_1.png or whatever I named it... not super pretty. 
+      
+      OH -> I don't need multiple CPUs Fix this in this sh
+      
+  ### PART 3 ###
+  
+    # 10 and 11, STAR
+      $ mamba install Star
+      $ mamba install Picard
+      $ mamba install Samtools
+      $ mamba install NumPy
+      $ mamba install Matplotlib
+      $ mamba install HTSeqs
+    
+      $ mamba install gffread
+      $ cp /projects/bgmp/shared/Bi623/PS2/campylomormyrus.fasta .
+      $ cp /projects/bgmp/shared/Bi623/PS2/campylomormyrus.gff .
+      $ gffread campylomormyrus.gff -T -o campylomormyrus.gtf
+      
+      	/gpfs/home/kcoulter/miniforge3/envs/QAA/bin/STAR-avx2 --runThreadN 8 --runMode genomeGenerate --genomeDir /projects/bgmp/kcoulter/bioinfo/Bi623/QAA/campy_data/align_db/ --genomeFastaFiles /projects/bgmp/kcoulter/bioinfo/Bi623/QAA/campy_data/campylomormyrus.fasta --sjdbGTFfile /projects/bgmp/kcoulter/bioinfo/Bi623/QAA/campy_data/campylomormyrus.gtf
+        STAR version: 2.7.11b   compiled: 2025-07-24T03:06:21+0000 :/opt/conda/conda-bld/star_1753326220084/work/source
+
+        Sep 04 19:36:49 ..... started STAR run
+        Sep 04 19:36:49 ... starting to generate Genome files
+        Sep 04 19:36:56 ..... processing annotations GTF
+        !!!!! WARNING: --genomeSAindexNbases 14 is too large for the genome size=862592683, which may cause seg-fault at the mapping step. Re-run genome generation with recommended --genomeSAindexNbases 13
+        Sep 04 19:36:59 ... starting to sort Suffix Array. This may take a long time...
+        Sep 04 19:37:04 ... sorting Suffix Array chunks and saving them to disk...
+        
+      # CREATED database_builder.sh
+      # CREATED starliner.sh
+        
+        
+      

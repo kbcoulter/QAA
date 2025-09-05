@@ -93,9 +93,11 @@ $ open Crh_rhy116_EO_adult_3_2_fastqc.html
 $ gzip -dc Cco_com123_EO_6cm_1_1.fastq.gz | head -n 4 | awk '{ print length($0) }'
 ```
 
-    The plots look nearly identical (as far as values), but my process was faster than the entire FastQC output. I did not use a quality score cutoff, include error bars, or bin the quality scores into acceptable and less acceptable regions, but beyond that, my output matches the FastQC. 
+    The plots look nearly similiar (as far as values), but my process was faster than the entire FastQC output.
     
-While the runtime was shorter, my process may not be as fast or resource efficient as FastQC. 
+I did not include error bars and colored bins for acceptable scores, but beyond those minor details, my values are slight different from the FastQC. At the beginning of the reads, my plot shows a higher quality score. This is because my script does not take into account any adapters added to the beginning of the reads. So, I am artificially inflating these mean values and offsetting my reads. Still, my plot is comparable to FastQC. If this data wasn't high quality, this could become an enormously important oversight. 
+    
+Reagrding runtime and resource use, while the runtime was shorter (3:12.14 mins to ~ 15), my process may not be as fast or resource efficient as FastQC. 
     
     First, my script is written in Python, which is much slower than the languages FASTQC is likely written in, such as Java or C. Also, my script is optimized for logic and readability, whereas FASTQC is undoubtedly optimized for speed and resource efficiency. Finally, I am creating a single plot, not multiple, formatting them into an html, or producing detailed user messages and warnings like FastQC. While other factors also contribute to the high memory usage, CPU load, and runtime of my script, these are the primary reasons it may not be faster than FastQC, like it seems. 
 
@@ -342,11 +344,10 @@ TrimmomaticPE: Completed successfully
 
 8.  Plot the trimmed read length distributions for both paired R1 and paired R2 reads (on the same plot - yes, you will have to use Python or R to plot this. See ICA4 from Bi621). You can produce 2 different plots for your 2 different RNA-seq samples. There are a number of ways you could possibly do this. One useful thing your plot should show, for example, is whether R1s are trimmed more extensively than R2s, or vice versa. Comment on whether you expect R1s and R2s to be adapter-trimmed at different rates and why.
 
-[Include your plot and comment on R1/R2 adapter trimming]
+Cco_com123_EO_6cm_1_readlen.png
+Crh_rhy116_EO_adult_3_readlen.png
 
-```{R, eval=TRUE}
-
-```
+In the plots, we can see that read 2 is generally shorter than read 1 after trimming. This is likely because we cutoff more low quality reads at the 3' end, forcing us to cut more bases and adapters and make the reads shorter than read1. R2 should be adapter trimmed at a higher rate than R1. 
 
 9.  Bonus - Run `FastQC` on your trimmed data. Comment on differences you observe between the trimmed and untrimmed data. Include any figures needed to support your conclusions.
 
@@ -385,6 +386,13 @@ $ mamba install HTSeqs
 
 ```{bash, eval=FALSE}
 
+$ mamba install gffread
+$ cp /projects/bgmp/shared/Bi623/PS2/campylomormyrus.fasta .
+$ cp /projects/bgmp/shared/Bi623/PS2/campylomormyrus.gff .
+$ gffread campylomormyrus.gff -T -o campylomormyrus.gtf
+
+$ sbatch ./database_builder.sh
+$ sbatch ./starliner.sh
 ```
 
 12. Remove PCR duplicates using [Picard MarkDuplicates](https://broadinstitute.github.io/picard/command-line-overview.html#MarkDuplicates). You may need to sort your reads with `samtools` before running Picard.
