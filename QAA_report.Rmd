@@ -1,12 +1,13 @@
 ---
-title: "PS2_template"
+title: "QAA PDF Analysis Report"
 output: html_document
 author: Kaden Coulter
 date: "2025-04-25"
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, echo = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
 ```
 
 # RNA-seq Quality Assessment Report
@@ -15,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Data set:
 
-Here, we process electric organ and/or skeletal muscle RNA-seq reads for a future differential gene expression analysis. We will be working with 2 RNA-seq files from two different electric fish studies (PRJNA1005245 and PRJNA1005244). The methods for the PRJNA1005244 dataset are [published](https://doi.org/10.1093/molbev/msae021) and the methods for the PRJNA1005245 data set are written in the third chapter of a [thesis](https://canvas.uoregon.edu/courses/266187/files/22059308?module_item_id=5380118).
+Here, we process electric organ and/or skeletal muscle RNA-seq reads for a future differential gene expression analysis. We will be working with 2 RNA-seq files from two different electric fish studies (PRJNA1005245 and PRJNA1005244). The methods for the PRJNA1005244 data set are [published](https://doi.org/10.1093/molbev/msae021) and the methods for the PRJNA1005245 data set are written in the third chapter of a [thesis](https://canvas.uoregon.edu/courses/266187/files/22059308?module_item_id=5380118).
 
 SRR25630309 -\> Cco_com123_EO_6cm_1 and SRR25630393 -\> Crh_rhy116_EO_adult_3 are the selected files.
 
@@ -47,11 +48,11 @@ After this, I copied and ran an altered quality score plotting script from Demul
 
 While my run time was shorter (3:12.14 minutes to approximately 15 minutes), my process may not actually be as fast or resource efficient as FASTQC. My script is written in Python, which is much slower than the languages FASTQC is likely built in, such as Java or C. In addition, my script prioritizes logic and readability, while FASTQC is clearly optimized for speed and resource efficiency. I’m also only generating a single plot, not multiple figures, formatting them into an HTML report, or producing detailed user messages and warnings like FASTQC does. While other factors also play a role in the higher memory usage, CPU load, and run time of my script, these are the main reasons it doesn’t appear faster than FASTQC.
 
-!!! INSERT CCo_1.png !!!
+![Mean quality score (30 - 37) by base position in read, 0 indexed. Each bin is representative of a single base within the read.](figures/Cco_1_1.png)
 
 ### Overall data quality of libraries:
 
-#### Using the `FASTQC` [documentation](https://www.bioinformatics.babraham.ac.uk/projects/FASTQC/Help/3%20Analysis%20Modules/) I have included the following interpretation of results:
+#### Using the `FASTQC` [documentation](https://www.bioinformatics.babraham.ac.uk/projects/FASTQC/Help/3%20Analysis%20Modules/) results from FASATQC were interpreted as follows:
 
 -   Per Tile Sequence Quality: !
 
@@ -73,7 +74,7 @@ While my run time was shorter (3:12.14 minutes to approximately 15 minutes), my 
 
     In every file, we get an adapter content warning flagged as failure. Again, this is an artifact or leftover of RNA-seq and can be dismissed. We have short fragments, causing us to sequence the adapter at the end of our reads. We have a bit of contamination at the end of our reads, suggesting our adapters are a bit long. This is expected in illumina RNA-seq and can be dismissed.
 
-#### Can We Use This For Further Analysis:
+#### Can We Use This For Further Analysis?
 
 Based on the data quality and the dismissal of all raised warnings, we can continue to analyze this data. Everything looks as expected for the type of sequencing we used to generate this data, the data is high quality, and nothing seems questionable or suspicious. Continue with analysis!
 
@@ -84,7 +85,6 @@ Based on the data quality and the dismissal of all raised warnings, we can conti
 We obtain the following proportion of reads trimmed from our files.
 
 ```{r, echo=FALSE}
-library(knitr)
 
 trim_data <- data.frame(
   File = c("Cco_com123_EO_6cm_1_1.fastq.gz",
@@ -109,7 +109,6 @@ Also, note the difference in proportions between these results and cutadapt is b
 Following this, I used trimmomatic to quality trim reads, with a leading quality of 3, a trailing quality of 3, a sliding window size of 5 with required quality of 15 and a minimum length of 35 bases. This yielded the values shown in the table below. Following this, I plotted the trimmed read length distributions for both paired R1 and paired R2 reads using the slurm script read_len_dist_slurm.sh which uses the script read_len_dist.py.
 
 ```{r,  echo=FALSE}
-library(knitr)
 
 data <- data.frame(
   Metric = c("Input Read Pairs",
@@ -133,6 +132,8 @@ kable(data, align = "lrr")
 
 !!! Cco_com123_EO_6cm_1_readlen.png Crh_rhy116_EO_adult_3_readlen.png !!!
 
+![Log scaled distribution of Cco_com123_EO_6cm_1 read lenghts (bp). Red bars represent read1 (R1) counts while blue bars represent read2 (R2) counts. Bin width of combined reads (read1 and read2) is representative of read length bins.](figures/Cco_com123_EO_6cm_1_readlen.png) ![Log scaled distribution of Crh_rhy116_EO_adult_3 read lenghts (bp). Orange bars represent read1 (R1) counts while purple bars represent read2 (R2) counts. Bin width of combined reads (read1 and read2) is representative of read length bins.](figures/Crh_rhy116_EO_adult_3_readlen.png)
+
 In the plots, we can see that read 2 is generally shorter than read 1 after trimming. This is likely because we cutoff more low quality reads at the 3' end, cutting more bases and adapters for R2, making the reads shorter than R1. R2 is expected to be adapter trimmed at a higher rate than R1.
 
 ## Part 3 – Alignment and strand-specificity
@@ -144,7 +145,6 @@ At this point, I Downloaded the publicly available *Campylomormyrus compressiros
 Afterwards, I removed PCR duplicates using Picard. To do this, I needed to sort my reads with samtools before running picard. The current version of picard requires alternate setup. So, I activated a new environment called stupidpicard (naturally) with Picard2.18 and Python3.60 to safely use the tools. When running picard, I removed duplicates and set validation stringency to be lenient.
 
 ```{r, echo=FALSE}
-library(knitr)
 
 dup_metrics_flipped <- data.frame(
   Metric = c("Library",
@@ -185,7 +185,6 @@ kable(dup_metrics_flipped, align = "lrr")
 After this, I calculated the number of mapped and unmapped reads from each of the 2 SAM files post deduplication with picard. The script sam_reporter.py was copied from BI621PS8, altered to accept multiple file inputs simultaneously, and checked to ensure validation of primary or secondary mapping using the bit wise flag. Afterwards, I determined that we have:
 
 ```{r, echo=FALSE}
-library(knitr)
 
 mapping_stats <- data.frame(
   File = c("Campy_Cco_com123_sort_marked.sam",
@@ -203,38 +202,17 @@ After this, I had to determine whether or not the data are from strand-specific 
 
 To do this, I created strand_tester.py, which accepts stranded and reverse files and provides some insight on which parameter and output are more appropriate. It is worth noting that this script does not consider the possibility of not strand specific libraries. Using this script, I determined that 928660 stranded reads and 19659636 reverse stranded reads were assigned for Crh_rhy116_EO_adult_3 and that 97989 stranded reads and 2026304 reverse stranded reads were assigned for Cco_com123_EO_6cm_1.
 
-Because --stranded=reverse assigned 63.2% of Crh_rhy116_EO_adult_3 and 59.4 % of Cco_com123_EO_6cm_1 reads to features, compared to --stranded=yes 3.0%  of Crh_rhy116_EO_adult_3 and 2.9 % of  Cco_com123_EO_6cm_1 reads, I conclude that this data is string-specific with the correct parameter for future analysis being --stranded=reverse. If more reads are aligned with --stranded=reverse, we know that our strands must be reverse stranded, meaning that the reads map to the opposite strand as the gene.
+Because --stranded=reverse assigned 63.2% of Crh_rhy116_EO_adult_3 and 59.4 % of Cco_com123_EO_6cm_1 reads to features, compared to --stranded=yes 3.0% of Crh_rhy116_EO_adult_3 and 2.9 % of Cco_com123_EO_6cm_1 reads, I conclude that this data is string-specific with the correct parameter for future analysis being --stranded=reverse. If more reads are aligned with --stranded=reverse, we know that our strands must be reverse stranded, meaning that the reads map to the opposite strand as the gene.
 
-
-Note, this --stranded=reverse conclusion only applied to this data. Other contexts, this conclusion may very well be false. 
-
-
-
-> [!TIP] Recall ICA4 from Bi621.
-
-[Describe whether your reads are "string-specific", why you think they are, any evidence, and which stranded parameter is appropriate and why]
+Note, this --stranded=reverse conclusion only applied to this data. Other contexts, this conclusion may very well be false.
 
 ## REPO ORGANIZATION
 
 ### Within this Repo:
 
 -   [Lab Notebook](./PS2_Notebook.txt)
--   [All Scripts](./scripts)
--   [All Plots](./figures_html)
--   [htseq-count Files](./htseq_files)
--   [Report.pdf](.) \## Also on Canvas
-
-### Pdf report details
-
-You should create a pdf file (using Rmarkdown) with a high-level report including:
-
--   [ ] all requested plots
--   [ ] answers to questions
--   [ ] mapped/unmapped read counts from PS8 script (in a nicely formatted table)
--   [ ] It should be named `QAA_report.pdf`
--   [ ] Include at the top level of your repo
--   [ ] ALSO, submit it to Canvas.
-
-> [!TIP] You may need to install LaTeX to knit your rmarkdown into a pdf file. Run `tinytex::install_tinytex()` to install it on R.
-
-The three parts of the assignment should be clearly labeled. Be sure to title and write a descriptive figure caption for each image/graph/table you present.
+-   [scripts](./scripts)
+-   [figures](./figures)
+-   [htmls](./htmls)
+-   [htseq_files](./htseq_files)
+-   [QAA_report.pdf](.) *Also on Canvas*
