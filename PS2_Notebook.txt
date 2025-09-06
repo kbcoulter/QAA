@@ -265,3 +265,52 @@
       $ chmod 755 sam_reporter.py 
       $ python sam_reporter.py -f star_aligned/Campy_Cco_com123_sort_marked.sam star_aligned/Campy_Crh_rhy116_sort_marked.sam
         
+    # COUNTS USING htseq-count 
+      -> Created htseq_slurm.sh
+      ### LOTS OF OUTS ###
+        100000 GFF lines processed.
+        200000 GFF lines processed.
+        300000 GFF lines processed.
+        400000 GFF lines processed.
+        500000 GFF lines processed.
+        589011 GFF lines processed.
+        Warning: Read SRR25630393.26969323 claims to have an aligned mate which could not be found in an adjacent line.
+        ...
+        For all Files -> No Failure or Error Message. This looks good to me!
+        
+    # STRAND SPECIFIC ANALYSIS:
+      CREATED strand_tester.py to provide some insight...
+  
+      $ python strand_tester.py -f ../htseq_files/Crh_rhy116_EO_adult_3_htseqcounts_[forORrev]stranded.txt ../htseq_files/Crh_rhy116_EO_adult_3_htseqcounts_[forORrev]reverse.txt
+          #####################################################################
+          ASSUMING STRANDED YES: ../htseq_files/Crh_rhy116_EO_adult_3_htseqcounts_[forORrev]stranded.txt 
+           
+                  AND 
+           
+          REVERSE ASSUMING: ../htseq_files/Crh_rhy116_EO_adult_3_htseqcounts_[forORrev]reverse.txt
+          #####################################################################
+          Total reads assigned (stranded=yes): 928660
+          Total reads assigned (stranded=reverse): 19659636
+          
+          Recommendation: use stranded='reverse'
+          #####################################################################
+          
+          OF 31081660
+      
+      $ python strand_tester.py -f ../htseq_files/Cco_com123_EO_6cm_1_htseqcounts_[forORrev]stranded.txt ../htseq_files/Cco_com123_EO_6cm_1_htseqcounts_[forORrev]reverse.txt
+          #####################################################################
+          ASSUMING STRANDED YES: ../htseq_files/Cco_com123_EO_6cm_1_htseqcounts_[forORrev]stranded.txt 
+           
+                  AND 
+           
+          REVERSE ASSUMING: ../htseq_files/Cco_com123_EO_6cm_1_htseqcounts_[forORrev]reverse.txt
+          #####################################################################
+          Total reads assigned (stranded=yes): 97989
+          Total reads assigned (stranded=reverse): 2026304
+          
+          Recommendation: use stranded='reverse'
+          #####################################################################
+          
+          OF 3412953	
+      
+      
