@@ -1,8 +1,10 @@
 ---
 title: "QAA PDF Analysis Report"
-output: html_document
-author: Kaden Coulter
+author: "Kaden Coulter"
 date: "2025-04-25"
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE, echo = FALSE}
@@ -24,6 +26,8 @@ SRR25630309 -\> Cco_com123_EO_6cm_1 and SRR25630393 -\> Crh_rhy116_EO_adult_3 ar
 
 Before beginning, I created a new conda environment called QAA and with FASTQC, cutadapt, and Trimmomatic. Using the tool FASTQC, I produced plots of the per-base quality score distributions and per-base N content for R1 and R2 reads. The full FASTQC HTML files can be found in the figures_html directory within this repo. These plots can be seen below, along with interpretation for each of the file outputs.
 
+\newpage
+
 ### Cco_com123_EO_6cm_1_1_FASTQC.html:
 
 For the Cco_com123_EO_6cm_1_1 per-base quality score distribution, we see consistent quality scores across all bases. There is some slight improvement from 1-3 bp and then an extremely gradual decline through 150, with a quality score greater than or equal to 34. The per-base N content is also seemingly fantastic. Through all positions, 0% N content is maintained. That is, through all bases we have no N content. We can see clear consistency with the quality score plots.
@@ -31,6 +35,8 @@ For the Cco_com123_EO_6cm_1_1 per-base quality score distribution, we see consis
 ![Mean Quality score (0-37) across all base positions in the read with error bars and color coded regions to denote high, potentially problematic, and problematic quality scores in Cco_com123_EO_6cm_1_1.](figures/Cco_com123_EO_6cm_1_1_bq.png)
 
 ![Percent of Unknown Reads (N) by base position in read of Cco_com123_EO_6cm_1_1.](figures/Cco_com123_EO_6cm_1_1n.png)
+
+\newpage
 
 ### Cco_com123_EO_6cm_1_2_FASTQC.html:
 
@@ -40,6 +46,8 @@ For the Cco_com123_EO_6cm_1_2 per-base quality score distribution, we see less c
 
 ![Percent of Unknown Reads (N) by base position in read of Cco_com123_EO_6cm_1_2.](figures/Cco_com123_EO_6cm_1_2n.png)
 
+\newpage
+
 ### Crh_rhy116_EO_adult_3_1_FASTQC.html:
 
 For the Crh_rhy116_EO_adult_3_1 per-base quality score distribution, we, once again, see consistent quality scores across all bases.There is some slight improvement from 1-5 bp followed by an extremely gradual decline through bp 150, with quality scores in the 34-36 range. When examining the per-base N content, we, again, see 0% N content through all bases and maintain consistency with the quality score plots.
@@ -48,6 +56,8 @@ For the Crh_rhy116_EO_adult_3_1 per-base quality score distribution, we, once ag
 
 ![Percent of Unknown Reads (N) by base position in read of Crh_rhy116_EO_adult_3_1n.png.](figures/Crh_rhy116_EO_adult_3_1n.png)
 
+\newpage
+
 ### Crh_rhy116_EO_adult_3_2_FASTQC.html:
 
 For the Crh_rhy116_EO_adult_3_2_FASTQC, we, once again, see a consistent quality score of 34-36 across all bp in the per-base quality score distribution. Once again, is a very gradual decline over bp in the quality score. Again, we see a per-base N content consistent with our quality scores. However, we see a small spike at bp1, seemingly demonstrating a 1% N Content at bp1. Even so, this is consistent with the other plot.
@@ -55,6 +65,8 @@ For the Crh_rhy116_EO_adult_3_2_FASTQC, we, once again, see a consistent quality
 ![Mean Quality score (0-37) across all base positions in the read with error bars and color coded regions to denote high, potentially problematic, and problematic quality scores in Crh_rhy116_EO_adult_3_2_bq.](figures/Crh_rhy116_EO_adult_3_2_bq.png)
 
 ![Percent of Unknown Reads (N) by base position in read of Crh_rhy116_EO_adult_3_2n.png.](figures/Crh_rhy116_EO_adult_3_2n.png)
+
+\newpage
 
 ### Non-FASTQC Plots and Interpretation
 
